@@ -6,4 +6,26 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
 
+    <item android:id="@+id/run_accept_thread"
+          android:icon="@android:drawable/ic_media_play"
+          android:title="@string/run_accept_thread"
+          android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/stop_accept_thread"
+          android:icon="@android:drawable/ic_media_pause"
+          android:title="@string/stop_accept_thread"
+          android:showAsAction="ifRoom" />
+    
+    <item android:id="@+id/start_reading_as_client"
+          android:title="@string/start_reading_as_client"
+          android:showAsAction="never" />
+    
+    <item android:id="@+id/stop_reading_as_client"
+          android:title="@string/stop_reading_as_client"
+          android:showAsAction="never" />
+    
+    <item android:id="@+id/ping_as_client"
+          android:title="@string/ping_as_client"
+          android:showAsAction="never" />
+    
 </menu>

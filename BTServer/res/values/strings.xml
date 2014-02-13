@@ -4,5 +4,10 @@
     <string name="app_name">BTServer</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="run_accept_thread">RunAccept</string>
+    <string name="stop_accept_thread">StopAccept</string>
+    <string name="start_reading_as_client">Start Reading as Client</string>
+    <string name="stop_reading_as_client">Stop Reading as Client</string>
+    <string name="ping_as_client">PingAsClient</string>
+    
 </resources>
