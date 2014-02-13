@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -13,7 +12,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,7 +31,6 @@ import android.widget.ListView;
  */
 public class ServerActivity extends Activity {
 
-    private static final String TAG = "BTHello";
     private static final String SERVICE_NAME = "BTHello";
     private static final String SERIAL_PORT_SERVICE_ID = "00001101-0000-1000-8000-00805F9B34FB";
     private static final UUID SERVICE_ID = UUID.fromString(SERIAL_PORT_SERVICE_ID);
@@ -81,7 +78,6 @@ public class ServerActivity extends Activity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Intent serverIntent = null;
         
         switch (item.getItemId()) {
     	//-------
@@ -242,6 +238,7 @@ public class ServerActivity extends Activity {
 	    private OutputStream	out;
 		private InputStream		in;
 		boolean	isLazyConnect = false;
+		boolean	isBinaryMode = false;
 		
     	SocketThread( BluetoothSocket socket ) {
     		this.socket = socket;
@@ -294,13 +291,17 @@ public class ServerActivity extends Activity {
 	    			while (socket!=null) {
 	    				int len = in.read(buffer);
 	    				if( len>0 ) {
-	    					StringBuilder	buf = new StringBuilder();
-	    					buf.append( Integer.toString( (int)buffer[0], 16 ) );
-	    					for( int i=1; i<len; i++ ) {
-	    						buf.append(",");
-	    						buf.append( Integer.toString( (int)buffer[i], 16 ) );
+	    					if( isBinaryMode ) {
+	    						StringBuilder	buf = new StringBuilder();
+	    						buf.append( Integer.toString( (int)buffer[0], 16 ) );
+	    						for( int i=1; i<len; i++ ) {
+	    							buf.append(",");
+	    							buf.append( Integer.toString( (int)buffer[i], 16 ) );
+	    						}
+	    						sendString( buf.toString() );
+	    					} else {
+	    						sendString( new String(buffer,0,len) );
 	    					}
-	    					sendString( buf.toString() );
 	    				}
 	    				if( len<0 )
 	    					break;
