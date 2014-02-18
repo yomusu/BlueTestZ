@@ -126,10 +126,26 @@ public class ServerActivity extends Activity implements OnBluetoothDeviceSelecte
                 adapter.add(readMessage);
                 break;
             case BTSPPService.MESSAGE_DATA:
+            {
             	// 入力フォームにセット
             	EditorFragment	editor = (EditorFragment)getFragmentManager().findFragmentById(R.id.editor_fragment);
             	editor.setCodeData( (String) msg.obj );
                 break;
+            }
+            case BTSPPService.MESSAGE_CONNECTED:
+            {
+            	// デバイスに接続した旨を表示
+            	InformationFragment	editor = (InformationFragment)getFragmentManager().findFragmentById(R.id.info_fragment);
+            	editor.setConnectionStatus( (String) msg.obj );
+            	break;
+            }	
+            case BTSPPService.MESSAGE_DISCONNECTED:
+            {
+            	// デバイスから切断した旨を表示
+            	InformationFragment	editor = (InformationFragment)getFragmentManager().findFragmentById(R.id.info_fragment);
+            	editor.setConnectionStatus( "未接続" );
+            	break;
+            }	
             }
         }
     };

@@ -19,10 +19,14 @@ public class BTSPPService {
     
     /** データ */
     static final public int MESSAGE_DATA = 0;
+    /** デバイスと接続した */
+    static final public int MESSAGE_CONNECTED = 1;
+    /** デバイスと切断した */
+    static final public int MESSAGE_DISCONNECTED = 2;
     /** ログ */
-    static final public int MESSAGE_LOG  = 1;
+    static final public int MESSAGE_LOG  = 3;
     /** エラー */
-    static final public int MESSAGE_ERROR = 2;
+    static final public int MESSAGE_ERROR = 4;
 
     /** サービス名(acceptする時のみ必要) */
     public String serviceName = "BTSPPService";
@@ -265,8 +269,11 @@ public class BTSPPService {
 	    				synchronized (this) {
 		    				socket.connect();
 		    				BluetoothDevice	dv = socket.getRemoteDevice();
+		    				// 接続済みのイベント送信
+		    				readHandler.obtainMessage(MESSAGE_CONNECTED, dv.getName() ).sendToTarget();
 		    				sendLog("socket just has connected to "+dv.getName()+"("+dv.getAddress()+")");
-		    				notifyAll();	// for waitConnection
+		    				// for waitConnection
+		    				notifyAll();
 						}
 	    			} catch( IOException e ) {
 		    			sendError("could not connect socket",e);
@@ -317,7 +324,11 @@ public class BTSPPService {
 			try {
 				if( in!=null )	in.close();
 				if( out!=null )	out.close();
-				if( socket!=null )	socket.close();
+				if( socket!=null ) {
+					socket.close();
+					// 切断のメッセージ
+					readHandler.obtainMessage( MESSAGE_DISCONNECTED ).sendToTarget();
+				}
 			} catch( IOException e ) {}
 			socket = null;
 			in = null;
