@@ -10,6 +10,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".ServerActivity" >
 
+    <fragment
+        android:id="@+id/editor_fragment"
+        android:name="com.yom.btserver.EditorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <ListView
         android:id="@+id/listView1"
         android:stackFromBottom="true"

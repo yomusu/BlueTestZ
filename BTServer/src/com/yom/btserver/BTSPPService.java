@@ -3,7 +3,6 @@ package com.yom.btserver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 
@@ -98,16 +97,20 @@ public class BTSPPService {
     	}
     }
     
+    /***
+     * ペア済みのデバイスを取得する
+     * @return
+     */
+    public BluetoothDevice[] getBondedDevices() {
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+        return pairedDevices.toArray( new BluetoothDevice[pairedDevices.size()]);
+    }
+    
     /**
      * デバイスに接続する
      */
-    public void connectDevice() {
+    public void connectDevice( final BluetoothDevice device ) {
     	if( clientThread==null ) {
-    		// ペア済みのデバイスを取得する
-            Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            Iterator<BluetoothDevice> it = pairedDevices.iterator();
-            final BluetoothDevice	device = it.next();
-            
     		clientThread = new SocketThread();
     		
 	    	Thread	th = new Thread( new Runnable() {
@@ -152,12 +155,8 @@ public class BTSPPService {
 	/***
 	 * デバイスにClientとして接続してデータを送りつけてみる
 	 */
-    public void pingToDevice() {
+    public void pingToDevice( final BluetoothDevice device ) {
     	
-    	Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-    	Iterator<BluetoothDevice> it = pairedDevices.iterator();
-    	final BluetoothDevice	device = it.next();
-
     	Thread	th = new Thread( new Runnable() {
     		@Override
     		public void run() {
