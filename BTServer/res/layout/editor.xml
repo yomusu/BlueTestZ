@@ -8,27 +8,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="会員番号"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
         <EditText
-            android:id="@+id/member_code"
+            android:id="@+id/edit_membercode"
             android:layout_width="211dp"
             android:layout_height="wrap_content"
             android:hint="会員番号"
             android:inputType="number" >
-
-            <requestFocus />
         </EditText>
-
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
-
     </LinearLayout>
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/btn_clear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -40,7 +37,7 @@
         android:text="クリア" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/btn_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -59,41 +56,159 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/linearLayout2" >
 
-        <Button
-            android:id="@+id/btn_group_men"
+        <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:text="男性グループ" />
+            android:text="分類"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
-            android:id="@+id/btn_group_family"
+            android:id="@+id/btn_bunrui_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:text="ファミリー" />
+            android:text="お子様バースデー" />
 
         <Button
-            android:id="@+id/btn_group_women"
+            android:id="@+id/btn_bunrui_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:text="女性グループ" />
+            android:text="大人バースデー" />
 
         <Button
-            android:id="@+id/btn_group_silver"
+            android:id="@+id/btn_bunrui_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
-            android:text="シルバー" />
+            android:text="welcome" />
+
+        <Button
+            android:id="@+id/btn_bunrui_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="季節イベントDM" />
+        
+        <Button
+            android:id="@+id/btn_bunrui_other"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="その他" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout3" >
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="135dp"
+            android:layout_height="wrap_content"
+            android:text="支払い方法"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/btn_genkin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="現金" />
+
+        <Button
+            android:id="@+id/btn_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="カード" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout4" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ご利用金額"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/edit_amount"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:hint="金額"
+            android:inputType="number" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="円"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout5" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ご利用人数"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/edit_number"
+            android:layout_width="115dp"
+            android:layout_height="wrap_content"
+            android:hint="人数"
+            android:inputType="number" />
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="人"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+        
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/linearLayout1" >
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="レジ精算者性別"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/btn_man"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="男性" />
+
+        <Button
+            android:id="@+id/btn_woman"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="女性" />
+    </LinearLayout>
+    
 </RelativeLayout>
