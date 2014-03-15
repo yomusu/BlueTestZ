@@ -326,8 +326,11 @@ public class BTSPPService {
 		    					buf.append((char)data);
 		    				} else {
 		    					// ターミネーター
-		    					sendString( buf.toString() );
-		    					buf.setLength(0);
+			    				Log.i("BTZ","read terminate:"+data);
+			    				if( buf.length() > 0 ) {	// CR+LF対策
+			    					sendString( buf.toString() );
+			    					buf.setLength(0);
+			    				}
 		    				}
 		    			}
 	    			}

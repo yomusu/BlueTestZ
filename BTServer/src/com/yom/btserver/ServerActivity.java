@@ -2,10 +2,14 @@ package com.yom.btserver;
 
 import java.io.IOException;
 
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
+import android.app.ActionBar.TabListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,8 +18,8 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 
 import com.yom.btserver.DeviceChoiceDialog.OnBluetoothDeviceSelectedListener;
 
@@ -27,28 +31,86 @@ import com.yom.btserver.DeviceChoiceDialog.OnBluetoothDeviceSelectedListener;
  * @author matsumoto
  *
  */
-public class ServerActivity extends Activity implements OnBluetoothDeviceSelectedListener {
+public class ServerActivity extends Activity implements OnBluetoothDeviceSelectedListener,TabListener {
 
     BTSPPService	btservice;
     
-    ArrayAdapter<String>	adapter;
+    
+    static final int	MP = LayoutParams.MATCH_PARENT;
+    static final int	WC = LayoutParams.WRAP_CONTENT;
+    
+    EditorFragment	editor;
+    LogFragment		logfragment;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_server);
+		
+		FrameLayout	frame = new FrameLayout(this);
+		frame.setLayoutParams( new LayoutParams(MP, MP) );
+		frame.setId( 10 );
+		
+		setContentView(frame);
+//		setContentView(R.layout.activity_server);
+		
+		// フラグメントの作成
+		editor = EditorFragment.newInstance("");
+		logfragment = new LogFragment();
+		
+		FragmentTransaction	tx = getFragmentManager().beginTransaction();
+		tx.add( 10, editor);
+		tx.add( 10, logfragment);
+		tx.show(editor);
+		tx.hide(logfragment);
+		tx.commit();
+		
+		// タブのセットアップ　
+		ActionBar	actionBar = getActionBar();
+		actionBar.setNavigationMode( ActionBar.NAVIGATION_MODE_TABS );
+		
+		actionBar.addTab(
+				actionBar.newTab()
+				.setText("入力")
+				.setTabListener( this )
+				);
+		
+		actionBar.addTab(
+				actionBar.newTab()
+				.setText("ログ")
+				.setTabListener( this )
+				);
 		
 		// ListView用のアダプタを作成
-		adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
-		
-        ListView	listView = (ListView) findViewById(R.id.listView1);
-        listView.setAdapter(adapter);
         
         // Bluetoothサービスの作成
         btservice = new BTSPPService();
         btservice.readHandler = readHandler;
-        
-        getFragmentManager().findFragmentById(R.id.editor_fragment);
+	}
+	
+	//-----------------------------------
+	// TabListenerの実装
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		int	pos = tab.getPosition();
+		switch( pos ) {
+		case 0:
+			ft.show(editor);
+			ft.hide(logfragment);
+			break;
+		case 1:
+			ft.show(logfragment);
+			ft.hide(editor);
+			break;
+		}
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 	}
 
 	/**
@@ -107,8 +169,9 @@ public class ServerActivity extends Activity implements OnBluetoothDeviceSelecte
         case R.id.stop_reading_as_client:
         	btservice.disconnect();
         	// for test
-        	EditorFragment	f = (EditorFragment)getFragmentManager().findFragmentById(R.id.editor_fragment);
-        	f.setCodeData("0120444444");
+//        	EditorFragment	f = (EditorFragment)getFragmentManager().findFragmentById(R.id.editor_fragment);
+//        	f.setCodeData("0120444444");
+        	editor.setCodeData("");
         	return true;
         }
         
@@ -123,27 +186,24 @@ public class ServerActivity extends Activity implements OnBluetoothDeviceSelecte
             case BTSPPService.MESSAGE_LOG:
                 String readMessage = (String) msg.obj;
                 Log.d("Handler",readMessage);
-                adapter.add(readMessage);
+                logfragment.adapter.add(readMessage);
                 break;
             case BTSPPService.MESSAGE_DATA:
             {
             	// 入力フォームにセット
-            	EditorFragment	editor = (EditorFragment)getFragmentManager().findFragmentById(R.id.editor_fragment);
             	editor.setCodeData( (String) msg.obj );
                 break;
             }
             case BTSPPService.MESSAGE_CONNECTED:
             {
             	// デバイスに接続した旨を表示
-            	InformationFragment	editor = (InformationFragment)getFragmentManager().findFragmentById(R.id.info_fragment);
-            	editor.setConnectionStatus( (String) msg.obj );
+            	logfragment.adapter.add( (String) msg.obj );
             	break;
             }	
             case BTSPPService.MESSAGE_DISCONNECTED:
             {
             	// デバイスから切断した旨を表示
-            	InformationFragment	editor = (InformationFragment)getFragmentManager().findFragmentById(R.id.info_fragment);
-            	editor.setConnectionStatus( "未接続" );
+            	logfragment.adapter.add("未接続");
             	break;
             }	
             }

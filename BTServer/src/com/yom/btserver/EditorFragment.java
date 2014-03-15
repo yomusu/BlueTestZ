@@ -35,6 +35,21 @@ import android.widget.Toast;
 
 public class EditorFragment extends Fragment implements View.OnClickListener, TextWatcher {
 
+	/** インスタンスのファクトリメソッド */
+	static public EditorFragment newInstance( String dum ) {
+		
+		EditorFragment	f = new EditorFragment();
+		
+		Bundle args = new Bundle();
+		args.putString("dum", dum );
+		f.setArguments( args );
+		
+		// ここで設定したargsは、Androidによるインスタンス自動再作成の際、用いられる
+		// onCreateでgetArguments()でこのBundleを取得する
+		
+		return f;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -235,8 +250,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener, Te
 		// 会員コードに値をセットする
 		EditText	memberCode = (EditText)getView().findViewById(R.id.edit_membercode);
 		memberCode.setText( code );
-		
-		
+
 		// イベントコードであれば入力フォームはクリアせずに
 		
 		// 送信するとクリアするのかな？
@@ -264,8 +278,8 @@ public class EditorFragment extends Fragment implements View.OnClickListener, Te
 		// URLの作成
 		final Uri.Builder	uri = new Uri.Builder();
 		uri.scheme("http");
-		uri.encodedAuthority("172.16.69.76:8080");
-		uri.path("/post");
+		uri.encodedAuthority("nkmemberz.appspot.com");
+		uri.path("/nk");
 
 		Log.i("rr",uri.build().toString());
 		
