@@ -254,7 +254,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener, Te
 		
 		// パラメーターの作成
 		final List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("memberCode", act.memberCode ));
+		params.add(new BasicNameValuePair("member", act.memberCode ));
 		params.add(new BasicNameValuePair("dm", act.dm ));
 		params.add(new BasicNameValuePair("sex", act.sex ));
 		params.add(new BasicNameValuePair("payment", act.payment ));
