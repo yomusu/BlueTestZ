@@ -11,6 +11,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.util.Log;
 
 public class BTSPPService {
 	
@@ -134,6 +135,8 @@ public class BTSPPService {
 	    		}
 			} );
 	    	th.start();
+    	} else {
+    		Log.e("BTZ","client Thread isn't null");
     	}
     }
     
@@ -238,6 +241,7 @@ public class BTSPPService {
 		boolean	isLazyConnect = false;
 		boolean	isBinaryMode = false;
 		
+		/** サーバースレッドから呼ばれる */
     	public void start( BluetoothSocket socket ) {
     		this.socket = socket;
     		start();
@@ -276,6 +280,7 @@ public class BTSPPService {
 		    				notifyAll();
 						}
 	    			} catch( IOException e ) {
+	    				e.printStackTrace();
 		    			sendError("could not connect socket",e);
 		    			return;
 	    			}
@@ -290,25 +295,41 @@ public class BTSPPService {
 	    		}
 
 	    		// 読み取り
-	    		byte[] buffer = new byte[1024];
 	    		try {
-	    			while (socket!=null) {
-	    				int len = in.read(buffer);
-	    				if( len>0 ) {
-	    					if( isBinaryMode ) {
-	    						StringBuilder	buf = new StringBuilder();
-	    						buf.append( Integer.toString( (int)buffer[0], 16 ) );
-	    						for( int i=1; i<len; i++ ) {
-	    							buf.append(",");
-	    							buf.append( Integer.toString( (int)buffer[i], 16 ) );
-	    						}
-	    						sendString( buf.toString() );
-	    					} else {
-	    						sendString( new String(buffer,0,len) );
-	    					}
-	    				}
-	    				if( len<0 )
-	    					break;
+	    			if( isBinaryMode ) {
+	    				// バイナリとしてダンプするモード
+	    	    		byte[] buffer = new byte[1024];
+		    			while (socket!=null) {
+		    				int len = in.read(buffer);
+		    				if( len>0 ) {
+		    					StringBuilder	buf = new StringBuilder();
+		    					buf.append( Integer.toString( (int)buffer[0], 16 ) );
+		    					for( int i=1; i<len; i++ ) {
+		    						buf.append(",");
+		    						buf.append( Integer.toString( (int)buffer[i], 16 ) );
+		    					}
+		    					sendString( buf.toString() );
+		    				}
+		    				if( len<0 )
+		    					break;
+		    			}
+	    			} else {
+	    				// 正規のモード
+	    				StringBuilder	buf = new StringBuilder();
+		    			while (socket!=null) {
+		    				int data = in.read();
+		    				if( data < 0 ) {
+		    					// ストリーム終了
+		    					break;
+		    				} else if( isWordChar(data) ) {
+		    					// 対象文字
+		    					buf.append((char)data);
+		    				} else {
+		    					// ターミネーター
+		    					sendString( buf.toString() );
+		    					buf.setLength(0);
+		    				}
+		    			}
 	    			}
 	    		} catch (IOException e) {
 	    			if( socket!=null )
@@ -320,6 +341,15 @@ public class BTSPPService {
 	    	}
 		}
 		
+		private boolean isWordChar( int ch ) {
+			if( ch>='0' && ch<='9' )
+				return true;
+			if( ch>='a' && ch<='z' )
+				return true;
+			if( ch>='A' && ch<='Z' )
+				return true;
+			return false;
+		}
 		synchronized public void cancel() {
 			try {
 				if( in!=null )	in.close();
