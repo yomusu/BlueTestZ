@@ -18,10 +18,15 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.Spinner;
 
 import com.yom.btserver.DeviceChoiceDialog.OnBluetoothDeviceSelectedListener;
+import com.yom.btserver.LoginDialog.OnLoginDialogListener;
 
 
 /***
@@ -31,7 +36,7 @@ import com.yom.btserver.DeviceChoiceDialog.OnBluetoothDeviceSelectedListener;
  * @author matsumoto
  *
  */
-public class ServerActivity extends Activity implements OnBluetoothDeviceSelectedListener,TabListener {
+public class ServerActivity extends Activity implements OnBluetoothDeviceSelectedListener,TabListener,OnLoginDialogListener {
 
     BTSPPService	btservice;
     
@@ -80,11 +85,13 @@ public class ServerActivity extends Activity implements OnBluetoothDeviceSelecte
 				.setTabListener( this )
 				);
 		
-		// ListView用のアダプタを作成
-        
         // Bluetoothサービスの作成
         btservice = new BTSPPService();
         btservice.readHandler = readHandler;
+        
+        // いきなりダイアログを出すことは可能か
+        LoginDialog	dlg = new LoginDialog();
+        dlg.show(getFragmentManager(), "login");
 	}
 	
 	//-----------------------------------
@@ -129,6 +136,11 @@ public class ServerActivity extends Activity implements OnBluetoothDeviceSelecte
     	super.onDestroy();
     }
     
+    @Override
+	public void onClickLoginButton( DialogFragment dialog ) {
+		
+	}
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         
@@ -265,5 +277,64 @@ class DeviceChoiceDialog extends DialogFragment {
             }
         });
         return builder.create();
+    }
+}
+
+/****
+ * 
+ * ログインダイアログ
+ * 
+ * @author matsumoto
+ *
+ */
+class LoginDialog extends DialogFragment {
+	
+	static public interface OnLoginDialogListener {
+		public void onClickLoginButton( DialogFragment dialog );
+	}
+
+	OnLoginDialogListener	listener;
+	
+	@Override  
+    public void onAttach(Activity activity) {  
+        super.onAttach(activity);  
+        try {  
+        	listener = (OnLoginDialogListener) activity;  
+        } catch (ClassCastException e) {  
+            throw new ClassCastException(activity.toString() + " must implement OnBluetoothDeviceSelectedListener");  
+        }  
+    }
+	   
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    	
+    	Dialog	dialog = new Dialog(getActivity());
+    	
+    	dialog.setTitle("店舗ログイン");
+    	dialog.setContentView(R.layout.login_dialog);
+    	
+    	ArrayAdapter<String>	shops = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item);
+    	shops.add("アキバ本店");
+    	shops.add("鳩ヶ谷店");
+    	shops.add("越谷店");
+    	
+    	Spinner	spin = (Spinner)dialog.findViewById(R.id.shop_spinner);
+    	spin.setAdapter(shops);
+    	
+    	dialog.findViewById(R.id.login).setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				listener.onClickLoginButton(LoginDialog.this);
+				dismiss();
+			}
+		});
+    	dialog.findViewById(R.id.login_cancel).setOnClickListener( new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				dismiss();
+			}
+		});
+    	
+        return dialog;
     }
 }
